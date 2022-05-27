@@ -6,6 +6,14 @@ const bot = new TGApi(token, {polling: true})
 
 const chats = {}
 
+
+function privacyChecker(userid){
+    const permissionArray=[1785431632]
+    if (permissionArray.indexOf(userid)>-1)
+        return 1;
+    return 0;
+}
+
 const startGame = async (chatId) => {
     await bot.sendMessage(chatId, `Сейчас я загадаю цифру от 0 до 9, а ты должен ее угадать`)
     const randomNumber = Math.floor(Math.random() * 10)
@@ -22,16 +30,17 @@ const start = () => {
     ])
 
     bot.on('message', async msg => {
+        console.log(msg);
         const text = msg.text;
         const chatId = msg.chat.id;
         if (text === '/start') {
             await bot.sendSticker(chatId, 'https://tlgrm.ru/_/stickers/43e/041/43e041ad-afbb-34c9-8e62-222f29474c0e/10.webp')
             return bot.sendMessage(chatId, `Привет`)
         }
-        if (text === '/info') {
+        if (!privacyChecker(text === '/info')) {
             return bot.sendMessage(chatId, `${msg.from.username}`)
         }
-        if (text === '/game') {
+        if (!privacyChecker(text === '/game')) {
             return startGame(chatId);
         }
         await bot.sendMessage(chatId, 'Я тебя на понял, напиши еще раз')
@@ -52,7 +61,5 @@ const start = () => {
         }
 
     })
-
 }
-
 start()
