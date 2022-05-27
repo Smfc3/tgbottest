@@ -36,6 +36,7 @@ const start = () => {
         }
         await bot.sendMessage(chatId, 'Я тебя на понял, напиши еще раз')
         return bot.sendSticker(chatId, 'https://tlgrm.ru/_/stickers/9df/619/9df6199a-ff6a-338d-9f74-625b0a647045/6.webp')
+
     })
     bot.on('callback_query',async msg=>{
         const data=msg.data;
@@ -49,7 +50,9 @@ const start = () => {
             return  bot.sendMessage(chatId,`Ты ошибся, бот загадал цифру ${chats[chatId]}`,againOptions), await bot.sendSticker(chatId,'https://tlgrm.ru/_/stickers/8a1/9aa/8a19aab4-98c0-37cb-a3d4-491cb94d7e12/6.webp')
 
         }
+
     })
+
 }
 
 start()
