@@ -1,65 +1,106 @@
+//1785431633
+
 const TGApi = require("node-telegram-bot-api")
-const {gameOptions, againOptions}= require('./options')
+
 const token = "5433296427:AAG7bj-uy5wXpI0zKQXIUdbNAgb-yyWfsz4"
 
 const bot = new TGApi(token, {polling: true})
 
-const chats = {}
+const keyboard = {
+    reply_markup: JSON.stringify({
+        inline_keyboard: [
+            [{text: 'Понедельник', callback_data: 'Иностранный язык 12:00-13:20'}, {text: 'Вторник', callback_data: '2'}, {text: 'Среда', callback_data: '3'}],
+                [{text: 'Четверг', callback_data: '4'}, {text: 'Пятница', callback_data: '5'}, {text: 'Суббота', callback_data: '6'}]
+        ]
+    })
+}
 
 
-function privacyChecker(userid){
-    const permissionArray=[1785431632]
-    if (permissionArray.indexOf(userid)>-1)
+function checkPermission(userid) {
+    const permissionArray = [1785431633,];
+    if (permissionArray.indexOf(userid) > -1)
         return 1;
     return 0;
 }
 
-const startGame = async (chatId) => {
-    await bot.sendMessage(chatId, `Сейчас я загадаю цифру от 0 до 9, а ты должен ее угадать`)
-    const randomNumber = Math.floor(Math.random() * 10)
-    chats[chatId]=randomNumber;
-    await bot.sendMessage(chatId,'Отгадывай', gameOptions);
-}
+// bot.on('message', async msg => {
+//     console.log(msg);
+//
+// })
+
+const now = new Date().toLocaleDateString()
+const nowt = new Date().toLocaleTimeString()
+
 
 const start = () => {
     bot.setMyCommands([
-        {command: '/start', description: 'Начальное приветствие'},
-        {command: '/info', description: 'Получить Username'},
-        {command: '/game', description: 'Угадай цифру'},
-
+        {command: '/start', description: 'Приветствие'},
+        {command: '/info', description: 'Получить id чата'},
+        {command: '/date', description: 'Дата'},
+        {command: '/time', description: 'Время'},
+        {command: '/ttable', description: 'расписание'},
     ])
 
-    bot.on('message', async msg => {
-        console.log(msg);
-        const text = msg.text;
-        const chatId = msg.chat.id;
-        if (text === '/start') {
-            await bot.sendSticker(chatId, 'https://tlgrm.ru/_/stickers/43e/041/43e041ad-afbb-34c9-8e62-222f29474c0e/10.webp')
-            return bot.sendMessage(chatId, `Привет`)
+    bot.onText(/^\/start/i, function (message) {
+        if (checkPermission(message.from.id) === 0) {
+            bot.sendMessage(message.chat.id, "Permission denied");
+            return;
         }
-        if (!privacyChecker(text === '/info')) {
-            return bot.sendMessage(chatId, `${msg.from.username}`)
-        }
-        if (!privacyChecker(text === '/game')) {
-            return startGame(chatId);
-        }
-        await bot.sendMessage(chatId, 'Я тебя на понял, напиши еще раз')
-        return bot.sendSticker(chatId, 'https://tlgrm.ru/_/stickers/9df/619/9df6199a-ff6a-338d-9f74-625b0a647045/6.webp')
+        bot.sendMessage(message.chat.id, "Привет !");
+    });
 
+    bot.onText(/^\/info/i, function (message) {
+        if (checkPermission(message.from.id) === 0) {
+            bot.sendMessage(message.chat.id, "Permission denied");
+            return;
+        }
+        bot.sendMessage(message.chat.id, `${message.from.id}`);
+    });
+
+    bot.onText(/^\/date/i, function (message) {
+        if (checkPermission(message.from.id) === 0) {
+            bot.sendMessage(message.chat.id, 'Permission denied');
+            return
+        }
+        bot.sendMessage(message.chat.id, `${now}`)
     })
-    bot.on('callback_query',async msg=>{
-        const data=msg.data;
-        const chatId=msg.message.chat.id;
-        if(data ==='/again'){
-            startGame(chatId)
-        }
-        if(data === chats[chatId]){
-            return  bot.sendMessage(chatId,`Поздравляю, ты отгадал цифру ${chats[chatId]}`,againOptions), await bot.sendSticker(chatId,'https://tlgrm.ru/_/stickers/9df/619/9df6199a-ff6a-338d-9f74-625b0a647045/1.webp')
-        } else{
-            return  bot.sendMessage(chatId,`Ты ошибся, бот загадал цифру ${chats[chatId]}`,againOptions), await bot.sendSticker(chatId,'https://tlgrm.ru/_/stickers/8a1/9aa/8a19aab4-98c0-37cb-a3d4-491cb94d7e12/6.webp')
+    bot.onText(/^\/time/i, function (message) {
 
+        if (checkPermission(message.from.id) === 0) {
+            bot.sendMessage(message.chat.id, 'Permission denied');
+            return
         }
-
+        bot.sendMessage(message.chat.id, `${nowt}`)
     })
+
+    bot.onText(/^\/ttable/i,  (message) => {
+        if (checkPermission(message.from.id) === 0) {
+            bot.sendMessage(message.chat.id, 'Permission denied');
+            return
+        }
+        const{id}=message.chat
+        // setTimeout(1000,()=>(bot.sendMessage(id,'qwerty')))
+        bot.sendMessage(message.chat.id, 'Расписание', keyboard);
+    })
+
+    bot.on('callback_query',  (message) => {
+        console.log(message,"callback_query",message.data);
+       bot.answerCallbackQuery(message.id,{text:`${message.data}`,alert:'text'})})
+
+    // bot.onText(/callback_query/,  (message) => {
+    //     console.log(message);
+    //     if (checkPermission(message.from.id) === 0) {
+    //         bot.sendMessage(message.chat.id, 'Permission denied');
+    //         return
+    //     }
+    //     const{id}=message.chat
+    //     // setTimeout(1000,()=>(bot.sendMessage(id,'qwerty')))
+    //     bot.ans(message.chat.id, 'Расписание' );
+    // })
+
 }
+
+
+
+
 start()
