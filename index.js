@@ -13,8 +13,8 @@ const keyboard = {
             {text: 'Вторник', callback_data: 'УПЗС 09:00-10:20 ФПЗС 10:30-11:50 УППЗС 12:00-13:20'},
             {text: 'Среда', callback_data: 'ГТПЗС 10:30-11:50 ГПЗС 12:00-13:20 МП 15:00-16:20'}],
             [{text: 'Четверг', callback_data: 'ИН-ЯЗ 13:30-14:50 ИН-ЯЗ 15:00-16:20'},
-            {text: 'Пятница', callback_data: 'Криминал 15:00-16:20 Арбитраж 16:30-17:50'},
-            {text: 'Суббота', callback_data: 'Лекции'}]],
+                {text: 'Пятница', callback_data: 'Криминал 15:00-16:20 Арбитраж 16:30-17:50'},
+                {text: 'Суббота', callback_data: 'Лекции'}]],
     })
 }
 
@@ -25,23 +25,23 @@ function checkPermission(userid) {
     return 0;
 }
 
-bot.on('message', async msg => {
-    console.log(msg);
-
-})
+//
+// bot.on('message', async msg => {
+//     console.log(msg);
+//
+// })
 
 const now = new Date().toLocaleDateString()
 const nowt = new Date().toLocaleTimeString()
 
 
 const start = () => {
-    bot.setMyCommands([{command: '/start', description: 'Приветствие'}, {
-        command: '/info',
-        description: 'Получить id чата'
-    }, {command: '/date', description: 'Дата'}, {command: '/time', description: 'Время'}, {
-        command: '/ttable',
-        description: 'расписание'
-    },])
+    bot.setMyCommands([
+        {command: '/start', description: 'Приветствие'},
+        {command: '/info', description: 'Получить id чата'},
+        {command: '/date', description: 'Дата'},
+        {command: '/time', description: 'Время'},
+        {command: '/ttable', description: 'расписание'},])
 
     bot.onText(/^\/start/i, function (message) {
         if (checkPermission(message.from.id) === 0) {
@@ -52,10 +52,10 @@ const start = () => {
     })
 
     bot.onText(/^\/info/i, function (message) {
-        if (checkPermission(message.from.id) === 0) {
-            bot.sendMessage(message.chat.id, "Permission denied");
-            return;
-        }
+        // if (checkPermission(message.from.id) === 0) {
+        //     bot.sendMessage(message.chat.id, "Permission denied");
+        //     return;
+        // }
         bot.sendMessage(message.chat.id, `${message.from.id}`);
     })
 
@@ -89,6 +89,9 @@ const start = () => {
         console.log(query);
     })
 
+    // bot.on('polling_error',(error)=>{
+    //     console.log(error.code);
+    // })
 }
 
 
