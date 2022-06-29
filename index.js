@@ -1,6 +1,7 @@
 //1785431633
 //64
 const TGApi = require("node-telegram-bot-api")
+const fs = require("fs");
 
 const token = "5433296427:AAG7bj-uy5wXpI0zKQXIUdbNAgb-yyWfsz4"
 
@@ -20,7 +21,7 @@ const keyboard = {
 
 
 function checkPermission(userid) {
-    const permissionArray = [1785431633,];
+    const permissionArray = [17854316313,];
     if (permissionArray.indexOf(userid) > -1) return 1;
     return 0;
 }
@@ -45,7 +46,7 @@ const start = () => {
 
     bot.onText(/^\/start/i, function (message) {
         if (checkPermission(message.from.id) === 0) {
-            bot.sendMessage(message.chat.id, "Permission denied");
+            bot.sendMessage(message.chat.id, `Access closed. Use "/info"`);
             return;
         }
         bot.sendMessage(message.chat.id, "Привет !");
@@ -61,7 +62,7 @@ const start = () => {
 
     bot.onText(/^\/date/i, function (message) {
         if (checkPermission(message.from.id) === 0) {
-            bot.sendMessage(message.chat.id, 'Permission denied');
+            bot.sendMessage(message.chat.id, `Access closed. Use "/info"`);
             return
         }
         bot.sendMessage(message.chat.id, `${now}`)
@@ -70,7 +71,7 @@ const start = () => {
     bot.onText(/^\/time/i, function (message) {
 
         if (checkPermission(message.from.id) === 0) {
-            bot.sendMessage(message.chat.id, 'Permission denied');
+            bot.sendMessage(message.chat.id, `Access closed. Use "/info"`);
             return
         }
         bot.sendMessage(message.chat.id, `${nowt}`)
@@ -78,7 +79,7 @@ const start = () => {
 
     bot.onText(/^\/ttable/i, (message) => {
         if (checkPermission(message.from.id) === 0) {
-            bot.sendMessage(message.chat.id, 'Permission denied');
+            bot.sendMessage(message.chat.id, `Access closed. Use "/info"`);
             return
         }
         bot.sendMessage(message.chat.id, 'Расписание', keyboard);
